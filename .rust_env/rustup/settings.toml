@@ -1,0 +1,7 @@
+version = "12"
+
+# add the default set of the cargo run
+default-run = "mindlock"
+
+
+[overrides]

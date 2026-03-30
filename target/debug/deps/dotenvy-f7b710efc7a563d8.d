@@ -1,0 +1,11 @@
+/Users/macbookpri/Downloads/mindlock/target/debug/deps/dotenvy-f7b710efc7a563d8.d: /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/lib.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/errors.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/find.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/iter.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/parse.rs
+
+/Users/macbookpri/Downloads/mindlock/target/debug/deps/libdotenvy-f7b710efc7a563d8.rlib: /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/lib.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/errors.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/find.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/iter.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/parse.rs
+
+/Users/macbookpri/Downloads/mindlock/target/debug/deps/libdotenvy-f7b710efc7a563d8.rmeta: /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/lib.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/errors.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/find.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/iter.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/parse.rs
+
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/lib.rs:
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/errors.rs:
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/find.rs:
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/iter.rs:
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/dotenvy-0.15.7/src/parse.rs:

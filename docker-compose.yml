@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+
+  # ── Phase 3: PostgreSQL ────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER:     mindlock
+      POSTGRES_PASSWORD: mindlock
+      POSTGRES_DB:       mindlock
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mindlock"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Phase 3: mindlockd daemon ─────────────────────────────────────────────
+  daemon:
+    build:
+      context: .
+      dockerfile: Dockerfile.daemon
+    environment:
+      HOST:         0.0.0.0
+      PORT:         8743
+      DATABASE_URL: postgres://mindlock:mindlock@postgres/mindlock
+      API_SECRET:   ${API_SECRET:-change-me-in-production}
+      RUST_LOG:     mindlockd=info,tower_http=debug
+    ports:
+      - "8743:8743"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Phase 3: Dashboard (Nginx serving static build) ───────────────────────
+  dashboard:
+    image: nginx:alpine
+    volumes:
+      - ./dashboard/dist:/usr/share/nginx/html:ro
+      - ./dashboard/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "3000:80"
+    depends_on:
+      - daemon
+
+volumes:
+  pgdata:

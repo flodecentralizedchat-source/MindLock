@@ -1,0 +1,38 @@
+# ── Build stage ────────────────────────────────────────────────────────────
+FROM rust:1.78-slim-bookworm AS builder
+
+WORKDIR /build
+RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
+
+# Cache dependencies first
+COPY Cargo.toml Cargo.lock ./
+COPY core/Cargo.toml    core/Cargo.toml
+COPY cli/Cargo.toml     cli/Cargo.toml
+COPY daemon/Cargo.toml  daemon/Cargo.toml
+COPY web3/Cargo.toml    web3/Cargo.toml
+
+# Dummy source to cache deps
+RUN mkdir -p core/src cli/src daemon/src web3/src \
+ && echo "pub fn main(){}" > cli/src/main.rs \
+ && echo "pub fn main(){}" > daemon/src/main.rs \
+ && echo "" > core/src/lib.rs \
+ && echo "" > web3/src/lib.rs \
+ && cargo build --release -p mindlock-daemon 2>/dev/null || true
+
+# Real source
+COPY . .
+RUN touch core/src/lib.rs daemon/src/main.rs \
+ && cargo build --release -p mindlock-daemon
+
+# ── Runtime stage ──────────────────────────────────────────────────────────
+FROM debian:bookworm-slim AS runtime
+
+RUN apt-get update && apt-get install -y ca-certificates libssl3 && rm -rf /var/lib/apt/lists/*
+RUN useradd -ms /bin/sh mindlock
+
+COPY --from=builder /build/target/release/mindlockd /usr/local/bin/mindlockd
+RUN chmod +x /usr/local/bin/mindlockd
+
+USER mindlock
+EXPOSE 8743
+CMD ["mindlockd"]

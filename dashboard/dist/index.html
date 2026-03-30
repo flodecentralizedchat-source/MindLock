@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindLock Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #0f0f13;
+    --surface: #16161c;
+    --card:    #1e1e27;
+    --border:  #2a2a38;
+    --text:    #e2e2f0;
+    --muted:   #8888aa;
+    --purple:  #7c6fe0;
+    --teal:    #2cb88a;
+    --amber:   #e09f27;
+    --red:     #e05050;
+    --green:   #50c878;
+    --mono:    'JetBrains Mono', 'Fira Mono', monospace;
+  }
+  body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text);
+         min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Top bar */
+  header { background: var(--surface); border-bottom: 1px solid var(--border);
+           padding: 0 2rem; height: 56px; display: flex; align-items: center; gap: 1rem; }
+  .logo  { font-size: 18px; font-weight: 600; color: var(--purple); letter-spacing: -0.5px; }
+  .logo span { color: var(--text); }
+  nav    { margin-left: auto; display: flex; gap: 0.5rem; }
+  nav button { background: transparent; border: 1px solid var(--border); color: var(--muted);
+               padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
+               transition: all 0.15s; }
+  nav button:hover, nav button.active { border-color: var(--purple); color: var(--text); }
+  nav button.active { background: rgba(124,111,224,0.12); }
+
+  /* Layout */
+  main { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+  /* Metric row */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .metric  { background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+             padding: 1.25rem; }
+  .metric .label { font-size: 12px; color: var(--muted); text-transform: uppercase;
+                   letter-spacing: 0.06em; margin-bottom: 8px; }
+  .metric .value { font-size: 28px; font-weight: 600; }
+  .metric .sub   { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .v-green  { color: var(--green); }
+  .v-amber  { color: var(--amber); }
+  .v-red    { color: var(--red);   }
+  .v-purple { color: var(--purple);}
+
+  /* File table */
+  .section-title { font-size: 14px; font-weight: 500; color: var(--muted);
+                   text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+          overflow: hidden; margin-bottom: 1.5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th    { background: var(--surface); padding: 10px 16px; text-align: left; font-weight: 500;
+          color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+          border-bottom: 1px solid var(--border); }
+  td    { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+           border-radius: 12px; font-size: 11px; font-weight: 500; }
+  .badge-green  { background: rgba(80,200,120,0.15); color: var(--green); }
+  .badge-amber  { background: rgba(224,159, 39,0.15); color: var(--amber); }
+  .badge-red    { background: rgba(224, 80, 80,0.15); color: var(--red); }
+  .badge-purple { background: rgba(124,111,224,0.15); color: var(--purple); }
+  .badge-muted  { background: rgba(136,136,170,0.15); color: var(--muted); }
+
+  /* Actions */
+  .actions { display: flex; gap: 6px; }
+  .btn { padding: 4px 10px; border-radius: 5px; font-size: 11px; cursor: pointer;
+         border: 1px solid var(--border); background: transparent; color: var(--muted);
+         transition: all 0.15s; white-space: nowrap; }
+  .btn:hover { border-color: var(--purple); color: var(--purple); }
+  .btn-red:hover { border-color: var(--red); color: var(--red); }
+  .btn-amber:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* Log panel */
+  .log-panel { font-family: var(--mono); font-size: 12px; line-height: 1.6;
+               max-height: 280px; overflow-y: auto; padding: 1rem; background: var(--surface);
+               border-radius: 8px; }
+  .log-entry { display: flex; gap: 1rem; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .log-time  { color: var(--muted); min-width: 140px; }
+  .log-outcome { min-width: 64px; }
+  .log-detail { color: var(--muted); }
+  .log-grant  { color: var(--green); }
+  .log-deny   { color: var(--red); }
+  .log-decoy  { color: var(--amber); }
+  .log-wipe   { color: var(--red); font-weight: 600; }
+
+  /* Search bar */
+  .toolbar { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center; }
+  input[type=text] { background: var(--card); border: 1px solid var(--border); color: var(--text);
+                     padding: 8px 12px; border-radius: 6px; font-size: 13px; flex: 1;
+                     outline: none; transition: border-color 0.15s; }
+  input[type=text]:focus { border-color: var(--purple); }
+  input[type=text]::placeholder { color: var(--muted); }
+
+  /* Status dot */
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot-green  { background: var(--green); }
+  .dot-red    { background: var(--red); }
+  .dot-amber  { background: var(--amber); }
+
+  /* Modal */
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+              z-index:100; align-items:center; justify-content:center; }
+  .modal-bg.open { display:flex; }
+  .modal { background:var(--card); border:1px solid var(--border); border-radius:12px;
+           padding:1.5rem; width:440px; max-width:90vw; }
+  .modal h3 { font-size:16px; margin-bottom:1rem; }
+  .modal label { font-size:12px; color:var(--muted); display:block; margin-bottom:4px; }
+  .modal input { width:100%; margin-bottom:12px; }
+  .modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:1rem; }
+  .btn-primary { background:var(--purple); border:none; color:#fff; padding:8px 18px;
+                 border-radius:6px; cursor:pointer; font-size:13px; font-weight:500; }
+  .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--muted);
+               padding:8px 18px; border-radius:6px; cursor:pointer; font-size:13px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Mind<span>Lock</span></div>
+  <nav>
+    <button class="active" onclick="showTab('files')">Files</button>
+    <button onclick="showTab('log')">Access Log</button>
+    <button onclick="showTab('settings')">Settings</button>
+  </nav>
+  <div style="margin-left:1rem;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+    <span class="dot dot-green"></span>
+    <span id="server-status">daemon connected</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Metrics -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="label">Total files</div>
+      <div class="value v-purple" id="m-total">—</div>
+      <div class="sub">registered with daemon</div>
+    </div>
+    <div class="metric">
+      <div class="label">Active files</div>
+      <div class="value v-green" id="m-active">—</div>
+      <div class="sub">not expired or wiped</div>
+    </div>
+    <div class="metric">
+      <div class="label">Access alerts</div>
+      <div class="value v-amber" id="m-alerts">—</div>
+      <div class="sub">decoy or deny events (24h)</div>
+    </div>
+    <div class="metric">
+      <div class="label">Wiped files</div>
+      <div class="value v-red" id="m-wiped">—</div>
+      <div class="sub">self-destructed</div>
+    </div>
+  </div>
+
+  <!-- Files tab -->
+  <div id="tab-files">
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="Search by label, file ID, or creator…" oninput="filterFiles()">
+      <button class="btn" onclick="refreshFiles()">Refresh</button>
+      <button class="btn btn-primary" onclick="openRegisterModal()" style="background:var(--purple);border:none;color:#fff;padding:7px 14px;border-radius:6px;font-size:12px;">+ Register file</button>
+    </div>
+    <p class="section-title">Registered files</p>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Label</th>
+            <th>File ID</th>
+            <th>Opens</th>
+            <th>Fails</th>
+            <th>Status</th>
+            <th>Expires</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="files-tbody">
+          <tr><td colspan="7" style="color:var(--muted);text-align:center;padding:2rem">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Access log tab -->
+  <div id="tab-log" style="display:none">
+    <p class="section-title">Live access log</p>
+    <div class="card" style="padding:1rem">
+      <div class="log-panel" id="log-panel">
+        <div style="color:var(--muted);text-align:center;padding:2rem">No log entries yet</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings tab -->
+  <div id="tab-settings" style="display:none">
+    <p class="section-title">Daemon settings</p>
+    <div class="card" style="padding:1.5rem">
+      <table style="font-size:13px">
+        <tr><td style="color:var(--muted);padding:8px 0;width:200px">API endpoint</td>
+            <td><code style="font-family:var(--mono);color:var(--purple)" id="s-endpoint">—</code></td></tr>
+        <tr><td style="color:var(--muted);padding:8px 0">API secret</td>
+            <td><input type="password" id="api-secret-input" placeholder="Bearer token" style="width:320px"
+                       onchange="localStorage.setItem('ml_secret', this.value)"></td></tr>
+        <tr><td style="color:var(--muted);padding:8px 0">Server URL</td>
+            <td><input type="text" id="server-url-input" placeholder="http://localhost:8743"
+                       style="width:320px" onchange="localStorage.setItem('ml_url', this.value);init()"></td></tr>
+      </table>
+      <button class="btn-primary" style="margin-top:1rem" onclick="init()">Connect</button>
+    </div>
+  </div>
+</main>
+
+<!-- Register modal -->
+<div class="modal-bg" id="register-modal">
+  <div class="modal">
+    <h3>Register .mindlock file</h3>
+    <label>File UUID</label>
+    <input type="text" id="reg-id" placeholder="From: mindlock inspect file.mindlock --format json">
+    <label>Label</label>
+    <input type="text" id="reg-label" placeholder="Q3 Report">
+    <label>Created by</label>
+    <input type="text" id="reg-by" placeholder="you@company.com">
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeRegisterModal()">Cancel</button>
+      <button class="btn-primary" onclick="registerFile()">Register</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = () => localStorage.getItem('ml_url') || 'http://localhost:8743';
+const SECRET = () => localStorage.getItem('ml_secret') || '';
+
+let allFiles = [];
+
+async function apiFetch(path, opts={}) {
+  return fetch(API() + '/api' + path, {
+    headers: { 'Authorization': 'Bearer ' + SECRET(), 'Content-Type': 'application/json' },
+    ...opts
+  });
+}
+
+async function init() {
+  document.getElementById('s-endpoint').textContent = API() + '/api';
+  document.getElementById('server-url-input').value = API();
+  document.getElementById('api-secret-input').value = SECRET();
+  await refreshFiles();
+  await refreshLog();
+}
+
+async function refreshFiles() {
+  try {
+    // Stub: generate sample data (real: GET /api/files with pagination)
+    allFiles = getSampleFiles();
+    renderFiles(allFiles);
+    updateMetrics(allFiles);
+    document.getElementById('server-status').textContent = 'daemon connected';
+    document.querySelector('.dot').className = 'dot dot-green';
+  } catch(e) {
+    document.getElementById('server-status').textContent = 'daemon offline';
+    document.querySelector('.dot').className = 'dot dot-red';
+  }
+}
+
+function getSampleFiles() {
+  return [
+    { id:'3f2a1b4c-0000-0000-0000-000000000001', label:'Q3 Financial Report', opens:4, max_opens:10,
+      fails:1, wiped:false, revoked:false, expires:'2025-12-31', sensitivity:'Confidential',
+      has_decoy:true, require_token:false },
+    { id:'3f2a1b4c-0000-0000-0000-000000000002', label:'Product Roadmap 2025', opens:12, max_opens:null,
+      fails:0, wiped:false, revoked:false, expires:null, sensitivity:'Internal',
+      has_decoy:false, require_token:false },
+    { id:'3f2a1b4c-0000-0000-0000-000000000003', label:'Investor Deck — Series A', opens:2, max_opens:5,
+      fails:3, wiped:false, revoked:false, expires:'2025-06-30', sensitivity:'TopSecret',
+      has_decoy:true, require_token:true },
+    { id:'3f2a1b4c-0000-0000-0000-000000000004', label:'Old NDA Draft', opens:1, max_opens:1,
+      fails:0, wiped:true, revoked:true, expires:null, sensitivity:'Confidential',
+      has_decoy:false, require_token:false },
+  ];
+}
+
+function renderFiles(files) {
+  const tbody = document.getElementById('files-tbody');
+  if (!files.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:2rem">No files registered</td></tr>';
+    return;
+  }
+  tbody.innerHTML = files.map(f => {
+    const shortId = f.id.split('-')[0] + '…';
+    const opensText = `${f.opens}${f.max_opens ? ' / ' + f.max_opens : ''}`;
+    const statusBadge = f.wiped
+      ? '<span class="badge badge-red">wiped</span>'
+      : f.revoked
+        ? '<span class="badge badge-red">revoked</span>'
+        : f.fails >= 3
+          ? '<span class="badge badge-amber">at risk</span>'
+          : '<span class="badge badge-green">active</span>';
+    const tags = [
+      f.has_decoy ? '<span class="badge badge-amber">decoy</span>' : '',
+      f.require_token ? '<span class="badge badge-purple">web3</span>' : '',
+    ].filter(Boolean).join(' ');
+    const expires = f.expires || '<span style="color:var(--muted)">never</span>';
+    return `<tr>
+      <td><strong>${f.label}</strong> ${tags}</td>
+      <td><code style="font-family:var(--mono);font-size:11px;color:var(--muted)">${shortId}</code></td>
+      <td>${opensText}</td>
+      <td style="color:${f.fails>2?'var(--amber)':'inherit'}">${f.fails}</td>
+      <td>${statusBadge}</td>
+      <td style="font-size:12px">${expires}</td>
+      <td><div class="actions">
+        <button class="btn" onclick="viewLog('${f.id}')">Log</button>
+        <button class="btn btn-amber" onclick="revokeFile('${f.id}','${f.label}')">Revoke</button>
+        <button class="btn btn-red" onclick="wipeFile('${f.id}','${f.label}')">Wipe</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateMetrics(files) {
+  document.getElementById('m-total').textContent  = files.length;
+  document.getElementById('m-active').textContent = files.filter(f=>!f.wiped&&!f.revoked).length;
+  document.getElementById('m-alerts').textContent = files.reduce((a,f)=>a+f.fails,0);
+  document.getElementById('m-wiped').textContent  = files.filter(f=>f.wiped).length;
+}
+
+function filterFiles() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = allFiles.filter(f =>
+    f.label.toLowerCase().includes(q) || f.id.includes(q)
+  );
+  renderFiles(filtered);
+}
+
+async function revokeFile(id, label) {
+  if (!confirm(`Revoke ALL access to "${label}"?\n\nThis takes effect immediately — anyone with the file cannot open it.`)) return;
+  // await apiFetch(`/files/${id}/revoke`, { method:'POST' });
+  alert(`✓ ${label} — access revoked`);
+  refreshFiles();
+}
+
+async function wipeFile(id, label) {
+  const confirm1 = prompt(`Type WIPE to permanently destroy "${label}"`);
+  if (confirm1 !== 'WIPE') return;
+  // await apiFetch(`/files/${id}/wipe`, { method:'POST' });
+  alert(`✓ ${label} — permanently wiped`);
+  refreshFiles();
+}
+
+function viewLog(id) {
+  showTab('log');
+  appendLog({ time: new Date().toISOString(), outcome:'grant', device:'this-device', file: id });
+}
+
+async function refreshLog() {
+  const panel = document.getElementById('log-panel');
+  const entries = getSampleLog();
+  panel.innerHTML = entries.map(e => {
+    const cls = { grant:'log-grant', deny:'log-deny', decoy:'log-decoy', wipe:'log-wipe' }[e.outcome] || '';
+    return `<div class="log-entry">
+      <span class="log-time">${e.time.replace('T',' ').substring(0,19)}</span>
+      <span class="log-outcome ${cls}">${e.outcome.toUpperCase()}</span>
+      <span class="log-detail">${e.device} · ${e.file}</span>
+    </div>`;
+  }).join('');
+}
+
+function appendLog(entry) {
+  const panel = document.getElementById('log-panel');
+  if (panel.children.length === 1 && panel.children[0].style.textAlign === 'center') {
+    panel.innerHTML = '';
+  }
+  const cls = { grant:'log-grant', deny:'log-deny', decoy:'log-decoy', wipe:'log-wipe' }[entry.outcome] || '';
+  const div = document.createElement('div');
+  div.className = 'log-entry';
+  div.innerHTML = `<span class="log-time">${entry.time.replace('T',' ').substring(0,19)}</span>
+    <span class="log-outcome ${cls}">${entry.outcome.toUpperCase()}</span>
+    <span class="log-detail">${entry.device} · ${entry.file}</span>`;
+  panel.prepend(div);
+}
+
+function getSampleLog() {
+  const now = Date.now();
+  return [
+    { time: new Date(now - 120000).toISOString(), outcome:'grant',  device:'MacBook-Pro-M2',   file:'3f2a1b4c-…0001' },
+    { time: new Date(now - 300000).toISOString(), outcome:'deny',   device:'Unknown-Device',   file:'3f2a1b4c-…0003' },
+    { time: new Date(now - 600000).toISOString(), outcome:'decoy',  device:'Win11-Desktop',    file:'3f2a1b4c-…0003' },
+    { time: new Date(now - 900000).toISOString(), outcome:'grant',  device:'MacBook-Pro-M2',   file:'3f2a1b4c-…0002' },
+    { time: new Date(now -1200000).toISOString(), outcome:'wipe',   device:'Unknown-Device',   file:'3f2a1b4c-…0004' },
+    { time: new Date(now -1800000).toISOString(), outcome:'grant',  device:'iPhone-15',        file:'3f2a1b4c-…0001' },
+  ];
+}
+
+function showTab(name) {
+  ['files','log','settings'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===name ? '' : 'none';
+  });
+  document.querySelectorAll('nav button').forEach((btn,i) => {
+    btn.classList.toggle('active', ['files','log','settings'][i] === name);
+  });
+}
+
+function openRegisterModal()  { document.getElementById('register-modal').classList.add('open'); }
+function closeRegisterModal() { document.getElementById('register-modal').classList.remove('open'); }
+async function registerFile() {
+  const id    = document.getElementById('reg-id').value.trim();
+  const label = document.getElementById('reg-label').value.trim();
+  const by    = document.getElementById('reg-by').value.trim();
+  if (!id || !label) { alert('File ID and label are required'); return; }
+  // await apiFetch('/files', { method:'POST', body: JSON.stringify({ file_id:id, label, created_by:by, ... }) });
+  alert(`✓ Registered: ${label}`);
+  closeRegisterModal();
+  refreshFiles();
+}
+
+// Poll log every 10s
+setInterval(refreshLog, 10000);
+init();
+</script>
+</body>
+</html>

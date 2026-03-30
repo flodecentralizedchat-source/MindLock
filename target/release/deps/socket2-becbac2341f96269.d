@@ -1,0 +1,11 @@
+/Users/macbookpri/Downloads/mindlock/target/release/deps/socket2-becbac2341f96269.d: /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/lib.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sockaddr.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/socket.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sockref.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sys/unix.rs
+
+/Users/macbookpri/Downloads/mindlock/target/release/deps/libsocket2-becbac2341f96269.rlib: /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/lib.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sockaddr.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/socket.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sockref.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sys/unix.rs
+
+/Users/macbookpri/Downloads/mindlock/target/release/deps/libsocket2-becbac2341f96269.rmeta: /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/lib.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sockaddr.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/socket.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sockref.rs /Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sys/unix.rs
+
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/lib.rs:
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sockaddr.rs:
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/socket.rs:
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sockref.rs:
+/Users/macbookpri/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.3/src/sys/unix.rs:
